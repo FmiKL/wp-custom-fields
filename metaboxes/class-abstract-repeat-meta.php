@@ -192,6 +192,7 @@ abstract class Abstract_Repeat_Meta {
      */
     public function enqueue_scripts() {
         wp_enqueue_script( 'repeater-script', get_stylesheet_directory_uri() . '/assets/js/field-repeater.js', array(), false, true );
+        wp_enqueue_script( 'media-script', get_stylesheet_directory_uri() . '/assets/js/field-media.js', array(), false, true );
     }
 
     /**

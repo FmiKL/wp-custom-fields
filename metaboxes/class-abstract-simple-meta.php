@@ -67,6 +67,7 @@ abstract class Abstract_Simple_Meta {
     public function init() {
         add_action( 'add_meta_boxes', array( $this, 'add' ), 10, 2 );
         add_action( 'save_post', array( $this, 'save' ) );
+        add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
     }
 
     /**
@@ -105,6 +106,16 @@ abstract class Abstract_Simple_Meta {
      * @return void
      */
     abstract protected function input( $value );
+
+    /**
+     * Add the script that allows
+     * to recover a media.
+     *
+     * @return void
+     */
+    public function enqueue_scripts() {
+        wp_enqueue_script( 'media-script', get_stylesheet_directory_uri() . '/assets/js/field-media.js', array(), false, true );
+    }
 
     /**
      * Saves value in database.
