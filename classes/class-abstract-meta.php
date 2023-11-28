@@ -71,6 +71,15 @@ abstract class Abstract_Meta {
     protected $id;
 
     /**
+     * Grouped fields wrapped in a meta box.
+     *
+     * @var array<string, array>
+     * @since 2.0.0
+     * @see Abstract_Meta::group_fields()
+     */
+    protected $groups = array();
+
+    /**
      * Fields for add to the meta box.
      *
      * @var array<array>
@@ -166,6 +175,23 @@ abstract class Abstract_Meta {
     }
 
     /**
+     * Groups the fields together.
+     *
+     * @param string $prefix    Prefix for the group.
+     * @param array  ...$fields Fields to group together.
+     * @since 2.0.0
+     */
+    public function group_fields( $prefix, ...$fields ) {
+        if ( ! isset( $this->groups[ $prefix ] ) ) {
+            $this->groups[ $prefix ] = array();
+        }
+
+        foreach ( $fields as $field ) {
+            array_push( $this->groups[ $prefix ], $field );
+        }
+    }
+
+    /**
      * Enqueues the necessary scripts and styles.
      * @since 1.0.0
      */
@@ -178,6 +204,10 @@ abstract class Abstract_Meta {
 
         if ( ! wp_script_is( 'field-repeater', 'registered' ) ) {
             wp_enqueue_script( 'field-repeater', $assets_path_directory_uri . '/js/field-repeater.js', array(), false, true );
+        }
+
+        if ( ! wp_style_is( 'field-meta', 'registered' ) ) {
+            wp_enqueue_style( 'field-meta', $assets_path_directory_uri . '/css/field-meta.css' );
         }
     }
 
