@@ -193,6 +193,7 @@ abstract class Abstract_Meta {
 
     /**
      * Enqueues the necessary scripts and styles.
+     * 
      * @since 1.0.0
      */
     public function enqueues_assets() {
