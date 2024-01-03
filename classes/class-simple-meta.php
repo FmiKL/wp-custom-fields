@@ -4,7 +4,7 @@
  * 
  * @package WP_Custom_Fields
  * @author Mikael Fourré
- * @version 2.0.1
+ * @version 2.0.2
  * @see https://github.com/FmiKL/wp-custom-fields
  */
 class Simple_Meta extends Abstract_Meta {
@@ -20,19 +20,33 @@ class Simple_Meta extends Abstract_Meta {
         foreach ( $this->fields as $field ) {
             $value       = get_post_meta( $post->ID, $field['name'], true );
             $placeholder = $field['options']['placeholder'] ?? '';
+            $rows        = $field['options']['rows'] ?? '10';
 
-            if ( $field['type'] === 'textarea' ) {
-                $rows = $field['options']['rows'] ?? '10';
-                echo '<p><textarea class="large-text" name="' . esc_attr( $field['name'] ) . '" placeholder="' . esc_attr( $placeholder ) . '" rows="' . esc_attr( $rows ) . '">' . esc_textarea( $value ) . '</textarea></p>';
-            } else {
-                if ( $field['type'] === 'date' ) {
-                    $date = DateTime::createFromFormat( 'Y-m-d', $value );
-                    if ( $date !== false ) {
-                        $value = $date->format( 'd-m-Y' );
+            switch ( $field['type'] ) {
+                case 'textarea':
+                    echo '<p><textarea class="large-text" name="' . esc_attr( $field['name'] ) . '" placeholder="' . esc_attr( $placeholder ) . '" rows="' . esc_attr( $rows ) . '">' . esc_textarea( $value ) . '</textarea></p>';
+                    break;
+                case 'editor':
+                    $value   = htmlspecialchars_decode( $value );
+                    $uniq_id = uniqid( 'wp_editor_' );
+
+                    wp_editor( $value, $uniq_id, array(
+                        'textarea_name' => $field['name'],
+                        'textarea_rows' => $rows,
+                        'media_buttons' => false,
+                        'wpautop'       => false,
+                    ) );
+                    break;
+                default:
+                    if ( $field['type'] === 'date' ) {
+                        $date = DateTime::createFromFormat( 'Y-m-d', $value );
+                        if ( $date !== false ) {
+                            $value = $date->format( 'd-m-Y' );
+                        }
                     }
-                }
 
-                echo '<p><input type="' . esc_attr( $field['type'] ) . '" class="large-text" name="' . esc_attr( $field['name'] ) . '" value="' . esc_attr( $value ) . '" placeholder="' . esc_attr( $placeholder ) . '"></p>';
+                    echo '<p><input type="' . esc_attr( $field['type'] ) . '" class="large-text" name="' . esc_attr( $field['name'] ) . '" value="' . esc_attr( $value ) . '" placeholder="' . esc_attr( $placeholder ) . '"></p>';
+                    break;
             }
         }
     }
@@ -54,10 +68,16 @@ class Simple_Meta extends Abstract_Meta {
             $field_name = $field['name'];
 
             if ( array_key_exists( $field_name, $_POST ) ) {
-                if ( $field['type'] === 'textarea' ) {
-                    $field_value = sanitize_textarea_field( $_POST[ $field_name ] );
-                } else {
-                    $field_value = sanitize_text_field( $_POST[ $field_name ] );
+                switch ( $field['type'] ) {
+                    case 'textarea':
+                        $field_value = sanitize_textarea_field( $_POST[ $field_name ] );
+                        break;
+                    case 'editor':
+                        $field_value = wp_kses_post( $_POST[ $field_name ] );
+                        break;
+                    default:
+                        $field_value = sanitize_text_field( $_POST[ $field_name ] );
+                        break;
                 }
 
                 if ( $field_value !== '' ) {
