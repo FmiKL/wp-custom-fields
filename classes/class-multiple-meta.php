@@ -5,7 +5,7 @@
  * 
  * @package WP_Custom_Fields
  * @author Mikael Fourré
- * @version 2.0.0
+ * @version 2.0.1
  * @see https://github.com/FmiKL/wp-custom-fields
  */
 class Multiple_Meta extends Abstract_Meta {
@@ -32,7 +32,6 @@ class Multiple_Meta extends Abstract_Meta {
                         $field_name  = $prefix . $field['name'];
                         $value       = get_post_meta( $post->ID, $field_name, true );
                         $placeholder = $field['options']['placeholder'] ?? '';
-                        $type        = $field['type'] ?? '';
 
                         $field_class = '';
                         if ( $field_index === 0 ) {
@@ -42,11 +41,18 @@ class Multiple_Meta extends Abstract_Meta {
                         }
 
                         echo '<td>';
-                        if ( $type === 'textarea' ) {
+                        if ( $field['type'] === 'textarea' ) {
                             $rows = $field['options']['rows'] ?? '5';
                             echo '<textarea class="large-text ' . $field_class . '" name="' . esc_attr( $field_name ) . '" placeholder="' . esc_attr( $placeholder ) . '" rows="' . esc_attr( $rows ) . '">' . esc_textarea( $value ) . '</textarea>';
                         } else {
-                            echo '<input type="' . esc_attr( $type ) . '" class="large-text ' . $field_class . '" name="' . esc_attr( $field_name ) . '" value="' . esc_attr( $value ) . '" placeholder="' . esc_attr( $placeholder ) . '">';
+                            if ( $field['type'] === 'date' ) {
+                                $date = DateTime::createFromFormat( 'Y-m-d', $value );
+                                if ( $date !== false ) {
+                                    $value = $date->format( 'd-m-Y' );
+                                }
+                            }
+
+                            echo '<input type="' . esc_attr( $field['type'] ) . '" class="large-text ' . $field_class . '" name="' . esc_attr( $field_name ) . '" value="' . esc_attr( $value ) . '" placeholder="' . esc_attr( $placeholder ) . '">';
                         }
                         echo '</td>';
 
