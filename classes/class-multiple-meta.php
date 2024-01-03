@@ -5,7 +5,7 @@
  * 
  * @package WP_Custom_Fields
  * @author Mikael Fourré
- * @version 2.0.1
+ * @version 2.0.2
  * @see https://github.com/FmiKL/wp-custom-fields
  */
 class Multiple_Meta extends Abstract_Meta {
