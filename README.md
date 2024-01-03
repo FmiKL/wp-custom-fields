@@ -1,23 +1,113 @@
-# Custom Fields for WordPress
+# WordPress Custom Fields
 
-This repository aims to provide examples of classes for creating custom fields for WordPress that can be used to avoid the use of an external plugin.
+This repository introduces a PHP class designed to simplify the creation of custom fields in the WordPress admin interface. Ideal for theme and plugin developers, this class allows easy and complete integration of custom fields.
 
-Simply extend the corresponding abstract class and implement the desired parameters as well as the method that will contain the fields.
+## Features
 
-To use wp media in your form, make sure that the placeholder of the input contains the word "image," "avatar," or "icon."
+- **Ease of Custom Fields Creation**: Allows the easy creation of different types of custom fields in WordPress.
+- **Customizable Fields**: Supports various field types such as textarea, text, email, color, etc.
+- **Advanced Media Integration**: Specific keywords in placeholders trigger the opening of the WordPress media library.
 
+## Installation and Setup
 
-## Classes to extend depending on use case:
+1. Clone or download this repository into your WordPress environment.
+2. Import the classes you need into your `functions.php` file or your plugin.
 
-- Abstract_Simple_Meta: extend this class to create a simple field with a single value.
-- Abstract_Multiple_Meta: extend this class to create a multiple field with multiple values.
-- Abstract_Repeat_Meta: extend this class to create a simple/multiple field with repeating value(s).
+```php
+require_once 'path/to/wp-custom-fields/class-abstract-meta.php';
+require_once 'path/to/wp-custom-fields/class-multiple-meta.php';
+require_once 'path/to/wp-custom-fields/class-repeat-meta.php';
+require_once 'path/to/wp-custom-fields/class-simple-meta.php';
+```
 
+## Usage Example
 
-## Some examples based on desired fields:
+### Create One or More Simple Fields
 
-- Meta_Description: a class to create a simple content field, such as a meta-description.
-- Meta_Content: a class to create a field with a visual text editor to add, for example, an HTML text area.
-- Meta_Part_Title: a class to create a multiple field with two content areas, such as a two-part title.
-- Meta_Described_Images: a class to create a repeat field with two content areas, an image and its description.
-- Meta_Image: a class to create a simple image field, with an opening on a media.
+```php
+function add_simple_description_meta() {
+    $meta = new Simple_Meta( 'Description', 'simple_description' );
+    $meta->set_enables( 'page', 3 );
+
+    $meta->add_field(
+        'text',
+        'my_title',
+        array( 'placeholder' => 'Enter your title' )
+    );
+
+    $meta->add_field(
+        'textarea',
+        'my_description',
+        array(
+            'placeholder' => 'Enter your description',
+            'rows'        => 7,
+        )
+    );
+}
+add_action( 'admin_init', 'add_simple_description_meta' );
+```
+
+### Create One or More Multiple Fields
+
+```php
+function add_multipart_title_meta() {
+    $meta = new Multiple_Meta( 'Multipart title', 'multipart_title' );
+    $meta->set_enables( 5 );
+
+    $meta->group_fields(
+        'my_title_',
+        $meta->add_field(
+            'text',
+            'part_1',
+            array( 'placeholder' => 'Enter the part 1 of the title' )
+        ),
+        $meta->add_field(
+            'text',
+            'part_2',
+            array( 'placeholder' => 'Enter the part 2 of the title' )
+        ),
+    );
+}
+add_action( 'admin_init', 'add_multipart_title_meta' );
+```
+
+### Create One or More Repeat Fields
+
+```php
+function add_repeat_image_meta() {
+    $meta = new Repeat_Meta( 'Repeat image', 'repeat_image' );
+    $meta->set_enables( 'page', 'post' );
+
+    $meta->group_fields(
+        'my_image_',
+        $meta->add_field(
+            'url',
+            'url',
+            array( 'placeholder' => 'Select your image ~ 800px' )
+        ),
+    );
+
+    $meta->group_fields(
+        'my_desc_image_',
+        $meta->add_field(
+            'url',
+            'url',
+            array( 'placeholder' => 'Select your image' )
+        ),
+        $meta->add_field(
+            'text',
+            'alt',
+            array( 'placeholder' => 'Enter your description' )
+        ),
+    );
+}
+add_action( 'admin_init', 'add_repeat_image_meta' );
+```
+
+## Contributing
+
+Contributions to improve this project are welcome, whether they be bug fixes, documentation improvements, or new feature suggestions.
+
+## License
+
+This project is distributed under the [GNU General Public License version 2 (GPL v2)](LICENSE).
