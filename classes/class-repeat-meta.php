@@ -5,7 +5,7 @@
  * 
  * @package WP_Custom_Fields
  * @author Mikael Fourré
- * @version 2.0.2
+ * @version 2.0.3
  * @see https://github.com/FmiKL/wp-custom-fields
  */
 class Repeat_Meta extends Abstract_Meta {
@@ -68,7 +68,7 @@ class Repeat_Meta extends Abstract_Meta {
                 list( $first_key, $last_key ) = $this->get_first_and_last_keys( $group );
                 foreach ( $group as $key => $field ) : ?>
                     <input
-                        type="text" class="large-text <?php echo ( $key === $first_key || count( $group ) === 1 ) ? 'first-field' : ''; ?> <?php echo $key === $last_key ? 'last-field' : ''; ?>"
+                        type="<?php echo esc_attr( $field['type'] ); ?>" class="large-text <?php echo ( $key === $first_key || count( $group ) === 1 ) ? 'first-field' : ''; ?> <?php echo $key === $last_key ? 'last-field' : ''; ?>"
                         name="<?php echo esc_attr( $this->id . '[' . $prefix . $field['name'] . '][' . self::INPUT_ROW_KEY . ']' ); ?>"
                         placeholder="<?php echo esc_attr( $field['options']['placeholder'] ?? '' ); ?>"
                     >
@@ -173,7 +173,7 @@ class Repeat_Meta extends Abstract_Meta {
                 list( $first_key, $last_key ) = $this->get_first_and_last_keys( $field );
                 foreach ( $field as $key => $value ) : ?>
                     <input
-                        type="text" class="large-text <?php echo ( $key === $first_key || count( $field ) === 1 ) ? 'first-field' : ''; ?> <?php echo $key === $last_key ? 'last-field' : ''; ?>"
+                        type="<?php echo esc_attr( $field['type'] ); ?>" class="large-text <?php echo ( $key === $first_key || count( $field ) === 1 ) ? 'first-field' : ''; ?> <?php echo $key === $last_key ? 'last-field' : ''; ?>"
                         name="<?php echo esc_attr( $this->id . '[' . $prefix . $key . '][' . $iteration . ']' ); ?>" value="<?php echo esc_attr( $value ); ?>"
                     >
                 <?php endforeach; ?>
