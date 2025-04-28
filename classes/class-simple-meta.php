@@ -4,7 +4,7 @@
  * 
  * @package WP_Custom_Fields
  * @author Mikael Fourré
- * @version 2.0.4
+ * @version 2.1.0
  * @see https://github.com/FmiKL/wp-custom-fields
  */
 class Simple_Meta extends Abstract_Meta {
@@ -20,7 +20,6 @@ class Simple_Meta extends Abstract_Meta {
         foreach ( $this->fields as $field ) {
             $value       = get_post_meta( $post->ID, $field['name'], true );
             $placeholder = $field['options']['placeholder'] ?? '';
-            $rows        = $field['options']['rows'] ?? '10';
             $default     = $field['options']['default'] ?? '';
 
             if ( $value === '' && $default !== '' ) {
@@ -29,11 +28,13 @@ class Simple_Meta extends Abstract_Meta {
 
             switch ( $field['type'] ) {
                 case 'textarea':
+                    $rows = $field['options']['rows'] ?? '10';
                     echo '<p><textarea class="large-text" name="' . esc_attr( $field['name'] ) . '" placeholder="' . esc_attr( $placeholder ) . '" rows="' . esc_attr( $rows ) . '">' . esc_textarea( $value ) . '</textarea></p>';
                     break;
                 case 'editor':
                     $value   = htmlspecialchars_decode( $value );
                     $uniq_id = uniqid( 'wp_editor_' );
+                    $rows    = $field['options']['rows'] ?? '10';
 
                     wp_editor( $value, $uniq_id, array(
                         'textarea_name' => $field['name'],
@@ -41,6 +42,19 @@ class Simple_Meta extends Abstract_Meta {
                         'media_buttons' => false,
                         'wpautop'       => false,
                     ) );
+                    break;
+                case 'select':
+                    $label   = $field['options']['label'] ?? '';
+                    $choices = $field['options']['choices'] ?? array();
+
+                    echo '<p><select class="widefat" name="' . esc_attr( $field['name'] ) . '">';
+                    if ( $label ) {
+                        echo '<option value="" ' . ( $value ? '' : 'selected' ) . ' disabled>' . esc_html( $label ) . '</option>';
+                    }
+                    foreach ( $choices as $choice ) {
+                        echo '<option value="' . esc_attr( $choice ) . '" ' . selected( $value, $choice, false ) . '>' . esc_html( $choice ) . '</option>';
+                    }
+                    echo '</select></p>';
                     break;
                 default:
                     if ( $field['type'] === 'date' ) {
