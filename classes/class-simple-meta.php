@@ -4,7 +4,7 @@
  * 
  * @package WP_Custom_Fields
  * @author Mikael Fourré
- * @version 2.0.3
+ * @version 2.0.4
  * @see https://github.com/FmiKL/wp-custom-fields
  */
 class Simple_Meta extends Abstract_Meta {
@@ -21,6 +21,11 @@ class Simple_Meta extends Abstract_Meta {
             $value       = get_post_meta( $post->ID, $field['name'], true );
             $placeholder = $field['options']['placeholder'] ?? '';
             $rows        = $field['options']['rows'] ?? '10';
+            $default     = $field['options']['default'] ?? '';
+
+            if ( $value === '' && $default !== '' ) {
+                $value = $default;
+            }
 
             switch ( $field['type'] ) {
                 case 'textarea':
