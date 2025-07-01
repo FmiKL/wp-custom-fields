@@ -5,7 +5,7 @@
  * 
  * @package WP_Custom_Fields
  * @author Mikael Fourré
- * @version 2.2.0
+ * @version 2.2.1
  * @see https://github.com/FmiKL/wp-custom-fields
  */
 class Repeat_Meta extends Abstract_Meta {
