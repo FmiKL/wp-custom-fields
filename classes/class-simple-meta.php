@@ -4,7 +4,7 @@
  * 
  * @package WP_Custom_Fields
  * @author Mikael Fourré
- * @version 2.2.0
+ * @version 2.2.1
  * @see https://github.com/FmiKL/wp-custom-fields
  */
 class Simple_Meta extends Abstract_Meta {
@@ -58,10 +58,7 @@ class Simple_Meta extends Abstract_Meta {
                     break;
                 default:
                     if ( $field['type'] === 'date' ) {
-                        $date = DateTime::createFromFormat( 'Y-m-d', $value );
-                        if ( $date !== false ) {
-                            $value = $date->format( 'd-m-Y' );
-                        }
+                        $value = $this->format_date_for_display( $value );
                     }
 
                     echo '<p><input type="' . esc_attr( $field['type'] ) . '" class="large-text" name="' . esc_attr( $field['name'] ) . '" value="' . esc_attr( $value ) . '" placeholder="' . esc_attr( $placeholder ) . '"></p>';

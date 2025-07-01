@@ -5,7 +5,7 @@
  * 
  * @package WP_Custom_Fields
  * @author Mikael Fourré
- * @version 2.2.0
+ * @version 2.2.1
  * @see https://github.com/FmiKL/wp-custom-fields
  */
 class Multiple_Meta extends Abstract_Meta {
@@ -46,10 +46,7 @@ class Multiple_Meta extends Abstract_Meta {
                             echo '<textarea class="large-text ' . $field_class . '" name="' . esc_attr( $field_name ) . '" placeholder="' . esc_attr( $placeholder ) . '" rows="' . esc_attr( $rows ) . '">' . esc_textarea( $value ) . '</textarea>';
                         } else {
                             if ( $field['type'] === 'date' ) {
-                                $date = DateTime::createFromFormat( 'Y-m-d', $value );
-                                if ( $date !== false ) {
-                                    $value = $date->format( 'd-m-Y' );
-                                }
+                                $value = $this->format_date_for_display( $value );
                             }
 
                             echo '<input type="' . esc_attr( $field['type'] ) . '" class="large-text ' . $field_class . '" name="' . esc_attr( $field_name ) . '" value="' . esc_attr( $value ) . '" placeholder="' . esc_attr( $placeholder ) . '">';

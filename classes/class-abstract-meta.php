@@ -5,7 +5,7 @@
  *
  * @package WP_Custom_Fields
  * @author Mikael Fourré
- * @version 2.2.0
+ * @version 2.2.1
  * @see https://github.com/FmiKL/wp-custom-fields
  */
 abstract class Abstract_Meta {
@@ -232,6 +232,22 @@ abstract class Abstract_Meta {
         }
 
         return true;
+    }
+
+    /**
+     * Converts date format from Y-m-d to d-m-Y for display.
+     *
+     * @param string  $value The date value in Y-m-d format.
+     * @return string Formatted date in d-m-Y format or original value if conversion fails.
+     * @since 2.2.1
+     */
+    protected function format_date_for_display( $value ) {
+        $date = DateTime::createFromFormat( 'Y-m-d', $value );
+        if ( $date !== false ) {
+            return $date->format( 'd-m-Y' );
+        }
+        
+        return $value;
     }
 
     /**
