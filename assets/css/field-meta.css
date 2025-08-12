@@ -42,8 +42,12 @@
     border-bottom-right-radius: 4px;
 }
 
+.table-tight .form-field td:only-child input {
+    border-radius: 4px;
+}
+
 .table-tight .form-field td {
-    padding: 10px 5px;
+    padding: 10px 6px;
 }
 
 .table-tight .form-field td:first-of-type {
@@ -51,7 +55,7 @@
 }
 
 .table-tight .form-field input {
-    width: 98%;
+    width: 100%;
 }
 
 @media screen and (max-width: 782px) {
