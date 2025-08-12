@@ -5,7 +5,7 @@
  *
  * @package WP_Custom_Fields
  * @author Mikael Fourré
- * @version 2.2.1
+ * @version 2.2.2
  * @see https://github.com/FmiKL/wp-custom-fields
  */
 abstract class Abstract_Meta {
@@ -200,15 +200,15 @@ abstract class Abstract_Meta {
         $assets_path_directory_uri = get_template_directory_uri() . self::ASSETS_PATH;
 
         if ( ! wp_script_is( 'field-media', 'registered' ) ) {
-            wp_enqueue_script( 'field-media', $assets_path_directory_uri . '/js/field-media.js', array(), false, true );
+            wp_enqueue_script( 'field-media', $assets_path_directory_uri . '/js/field-media.js', array(), null, true );
         }
 
         if ( ! wp_script_is( 'field-repeater', 'registered' ) ) {
-            wp_enqueue_script( 'field-repeater', $assets_path_directory_uri . '/js/field-repeater.js', array(), false, true );
+            wp_enqueue_script( 'field-repeater', $assets_path_directory_uri . '/js/field-repeater.js', array(), null, true );
         }
 
         if ( ! wp_style_is( 'field-meta', 'registered' ) ) {
-            wp_enqueue_style( 'field-meta', $assets_path_directory_uri . '/css/field-meta.css' );
+            wp_enqueue_style( 'field-meta', $assets_path_directory_uri . '/css/field-meta.css', array(), null );
         }
     }
 
