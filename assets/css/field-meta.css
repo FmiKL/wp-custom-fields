@@ -29,6 +29,7 @@
 
 .table-tight input,
 .table-tight textarea {
+    width: 100%;
     border-radius: 0;
 }
 
