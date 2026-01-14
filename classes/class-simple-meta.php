@@ -4,7 +4,7 @@
  * 
  * @package WP_Custom_Fields
  * @author Mikael Fourré
- * @version 2.2.4
+ * @version 2.2.5
  * @see https://github.com/FmiKL/wp-custom-fields
  */
 class Simple_Meta extends Abstract_Meta {
@@ -84,17 +84,7 @@ class Simple_Meta extends Abstract_Meta {
             $field_name = $field['name'];
 
             if ( array_key_exists( $field_name, $_POST ) ) {
-                switch ( $field['type'] ) {
-                    case 'textarea':
-                        $field_value = sanitize_textarea_field( $_POST[ $field_name ] );
-                        break;
-                    case 'editor':
-                        $field_value = wp_kses_post( $_POST[ $field_name ] );
-                        break;
-                    default:
-                        $field_value = sanitize_text_field( $_POST[ $field_name ] );
-                        break;
-                }
+                $field_value = $this->sanitize_field_value( $_POST[ $field_name ], $field );
 
                 if ( $field_value !== '' ) {
                     update_post_meta( $post_id, $field_name, $field_value );

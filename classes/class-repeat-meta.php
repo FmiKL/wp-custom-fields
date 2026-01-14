@@ -5,7 +5,7 @@
  * 
  * @package WP_Custom_Fields
  * @author Mikael Fourré
- * @version 2.2.4
+ * @version 2.2.5
  * @see https://github.com/FmiKL/wp-custom-fields
  */
 class Repeat_Meta extends Abstract_Meta {
@@ -235,22 +235,46 @@ class Repeat_Meta extends Abstract_Meta {
             return;
         }
 
-        if ( array_key_exists( $this->id, $_POST ) && is_array( $_POST[ $this->id ] ) ) {
-            $post_data = array();
-            foreach ( $_POST[ $this->id ] as $key => $values ) {
-                if ( is_array( $values ) ) {
-                    foreach ( $values as $value ) {
-                        $post_data[ $key ][] = sanitize_text_field( $value );
-                    }
+        if ( ! array_key_exists( $this->id, $_POST ) || ! is_array( $_POST[ $this->id ] ) ) {
+            return;
+        }
+
+        $field_map = array();
+        foreach ( $this->groups as $prefix => $group ) {
+            if ( ! is_array( $group ) ) {
+                continue;
+            }
+            foreach ( $group as $field ) {
+                if ( is_array( $field ) && isset( $field['name'] ) ) {
+                    $field_map[ $prefix . $field['name'] ] = $field;
                 }
             }
+        }
 
-            foreach ( $post_data as $key => $value ) {
-                if ( ! empty( array_filter( $value ) ) ) {
-                    update_post_meta( $post_id, $key, $value );
-                } else {
-                    delete_post_meta( $post_id, $key );
+        $post_data = array();
+        foreach ( $_POST[ $this->id ] as $key => $values ) {
+            if ( ! is_array( $values ) || ! isset( $field_map[ $key ] ) ) {
+                continue;
+            }
+
+            $post_data[ $key ] = array();
+            foreach ( $values as $value ) {
+                $post_data[ $key ][] = $this->sanitize_field_value( $value, $field_map[ $key ] );
+            }
+        }
+
+        foreach ( $post_data as $key => $value ) {
+            $has_values = array_filter(
+                $value,
+                static function ( $item ) {
+                    return $item !== '' && $item !== null;
                 }
+            );
+
+            if ( ! empty( $has_values ) ) {
+                update_post_meta( $post_id, $key, $value );
+            } else {
+                delete_post_meta( $post_id, $key );
             }
         }
     }

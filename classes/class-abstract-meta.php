@@ -5,7 +5,7 @@
  *
  * @package WP_Custom_Fields
  * @author Mikael Fourré
- * @version 2.2.4
+ * @version 2.2.5
  * @see https://github.com/FmiKL/wp-custom-fields
  */
 abstract class Abstract_Meta {
@@ -232,6 +232,51 @@ abstract class Abstract_Meta {
         }
 
         return true;
+    }
+
+    /**
+     * Sanitizes a field value based on its type.
+     *
+     * @param mixed $input Raw value.
+     * @param array $field Field configuration.
+     * @return string Sanitized value or empty string on invalid input.
+     * @since 2.2.5
+     */
+    protected function sanitize_field_value( $input, $field ) {
+        if ( is_array( $input ) ) {
+            return '';
+        }
+
+        $type  = $field['type'] ?? 'text';
+        $value = trim( (string) $input );
+
+        switch ( $type ) {
+            case 'checkbox':
+                return ( '1' === $value ) ? '1' : '0';
+            case 'email':
+                return sanitize_email( $value );
+            case 'url':
+                return esc_url_raw( $value );
+            case 'number':
+                return is_numeric( $value ) ? $value : '';
+            case 'color':
+                $sanitized = sanitize_hex_color( $value );
+                return $sanitized ? $sanitized : '';
+            case 'textarea':
+                return sanitize_textarea_field( $value );
+            case 'editor':
+                return wp_kses_post( $value );
+            case 'select':
+                $options = array();
+                if ( isset( $field['options']['choices'] ) && is_array( $field['options']['choices'] ) ) {
+                    $options = array_values( $field['options']['choices'] );
+                } else if ( isset( $field['options']['options'] ) && is_array( $field['options']['options'] ) ) {
+                    $options = array_values( $field['options']['options'] );
+                }
+                return in_array( $value, $options, true ) ? $value : '';
+            default:
+                return sanitize_text_field( $value );
+        }
     }
 
     /**
