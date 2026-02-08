@@ -5,7 +5,7 @@
  *
  * @package WP_Custom_Fields
  * @author Mikael Fourré
- * @version 2.2.5
+ * @version 2.2.6
  * @see https://github.com/FmiKL/wp-custom-fields
  */
 abstract class Abstract_Meta {
@@ -197,6 +197,8 @@ abstract class Abstract_Meta {
      * @since 1.0.0
      */
     public function enqueues_assets() {
+        wp_enqueue_media();
+
         $assets_path_directory_uri = get_template_directory_uri() . self::ASSETS_PATH;
 
         if ( ! wp_script_is( 'field-media', 'registered' ) ) {
